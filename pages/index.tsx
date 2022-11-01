@@ -12,7 +12,7 @@ const Home: NextPage = () => {
         <title>Twitter 2.0</title>
         {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
-      <main>
+      <main className='grid grid-cols-9'>
         <Sidebar />
         <Feed />
         <Widgets />
