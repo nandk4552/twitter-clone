@@ -1,5 +1,6 @@
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import React from 'react'
+import TweetBox from './TweetBox'
 
 function Feed() {
     return (
@@ -11,6 +12,9 @@ function Feed() {
 
 
             {/* tweet box */}
+            <div>
+                <TweetBox />
+            </div>
         </div>
     )
 }
