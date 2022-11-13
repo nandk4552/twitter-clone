@@ -1,7 +1,10 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { useSession } from 'next-auth/react';
 import React from 'react'
 import { TwitterTimelineEmbed } from 'react-twitter-embed';
 function Widgets() {
+
+    const { data: session } = useSession()
     return (
         <div className='px-2 mt-2 col-span-2 hidden lg:inline'>
             {/* search */}
@@ -12,7 +15,7 @@ function Widgets() {
 
             <TwitterTimelineEmbed
                 sourceType="profile"
-                screenName="NANDKIS007"
+                screenName={session?.user?.name || "NANDKIS007"}
                 options={{ height: 1000 }}
             />
         </div>
