@@ -1,8 +1,14 @@
 import { CalendarIcon, FaceSmileIcon, MagnifyingGlassCircleIcon, MapPinIcon, PhotoIcon } from '@heroicons/react/24/outline'
 import { useSession } from 'next-auth/react'
-import React, { useRef, useState } from 'react'
+import React, { Dispatch, SetStateAction, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
+import { Tweet, TweetBody } from '../typings'
+import { fetchTweets } from '../utils/fetchTweets'
+interface Props {
+    setTweets: React.Dispatch<React.SetStateAction<Tweet[]>>
+}
 
-function TweetBox() {
+function TweetBox({ setTweets }: Props) {
     const [input, setInput] = useState<string>('')
     const [image, setImage] = useState<string>('')
 
@@ -23,6 +29,44 @@ function TweetBox() {
         // set the image input field ref field to empty
         imageInputRef.current.value = '';
         // then close the image box
+        setImageUrlBoxIsOpen(false);
+    }
+
+    // post tweet helper function to post the tweeet
+    const postTweet = async () => {
+        const tweetInfo: TweetBody = {
+            text: input,
+            username: session?.user?.name || 'Unknown User',
+            profileImg: session?.user?.image || "https://links.papareact.com/gll",
+            image: image,
+        }
+        const result = await fetch(`/api/addTweet`, {
+            body: JSON.stringify(tweetInfo),
+            method: 'POST',
+        });
+
+
+        const json = await result.json();
+
+        const newTweets = await fetchTweets();
+        setTweets(newTweets);
+
+        toast('Tweet Posted', {
+            icon: '🚀',
+        })
+        return json
+    }
+    // to submit the tweet to the sanity backend using POST request
+    const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+    ) => {
+        // to prevent the page to refresh
+        e.preventDefault();
+
+        // post tweet function call
+        postTweet();
+        
+        setInput('');
+        setImage('');
         setImageUrlBoxIsOpen(false);
     }
 
@@ -48,6 +92,7 @@ function TweetBox() {
                             <MapPinIcon className='h-5 w-5' />
                         </div>
                         <button
+                            onClick={handleSubmit}
                             disabled={!input || !session}
                             className='bg-twitter px-5 py-2 font-bold text-white rounded-full disabled:opacity-40'>Tweet</button>
                     </div>
